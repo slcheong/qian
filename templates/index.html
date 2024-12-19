@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>求签</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #c4e23b, #acb6e5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 3rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .button-wrapper {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            outline: none;
+        }
+
+        #png-icon {
+            width: 150px;
+            height: 200px;
+            animation: idle-bounce 1.5s infinite ease-in-out;
+        }
+
+        #title {
+            font-size: 2rem;
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+            visibility: hidden;
+        }
+
+        #detail {
+            writing-mode: vertical-lr;
+            font-size: 2rem;
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+            visibility: hidden;
+        }
+
+        #explain {
+            font-size: 2rem;
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+            visibility: hidden;
+        }
+
+        @keyframes idle-bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes click-bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            10%, 90% {
+                transform: translateY(-5px);
+            }
+            20%, 80% {
+                transform: translateY(-10px);
+            }
+            30%, 70% {
+                transform: translateY(-20px);
+            }
+            40%, 60% {
+                transform: translateY(-30px);
+            }
+            50% {
+                transform: translateY(-40px);
+            }
+        }
+    </style>
+    <script>
+        async function generateNumber() {
+            const svgIcon = document.getElementById('png-icon');
+            const titleElement = document.getElementById('title');
+            const detailElement = document.getElementById('detail');
+            const explainElement = document.getElementById('explain');
+
+            // Start bounce animation
+            svgIcon.style.animation = "click-bounce 1s ease-in-out 3";
+
+            // Wait for animation to finish
+            setTimeout(async () => {
+                // Hide the SVG icon
+                svgIcon.style.visibility = "hidden";
+                svgIcon.style.height = "0";
+
+                // Fetch the qian_name
+                const response = await fetch('/generate');
+                const data = await response.json();
+
+                // Display the qian_name
+                titleElement.innerHTML = ` ${data.qian_name} (${data.type})`;
+                titleElement.style.visibility = "visible";
+
+                
+                detailElement.innerHTML = ` ${data.content}`;
+                detailElement.style.visibility = "visible";
+                detailElement.style.minHeight = "250px"
+                
+                explainElement.innerHTML = ` ${data.meaning}`;
+                explainElement.style.visibility = "visible";
+                explainElement.style.padding = "0px 10px 0px";
+                
+            }, 3000); // Matches 3x bounce duration
+        }
+    </script>
+</head>
+<body>
+    <h1> 心诚则灵 </h1>
+    <p id="title"></p>
+    <p id="detail"></p>
+    <p id="explain"></p>
+    <div class="button-wrapper">
+        <button onclick="generateNumber()">
+            <div id="icon-container">
+                <img id="png-icon" src="/static/qian.png" alt="求签" onclick="generateNumber()">
+            </div>
+        </button>
+    </div>
+    
+</body>
+</html>
